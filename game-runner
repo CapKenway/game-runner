@@ -1,0 +1,34 @@
+#!/bin/python
+
+import sys
+import os
+import subprocess
+from rich import print as rp
+
+args = sys.argv
+
+def PathFromList(path_list:list):
+    final_path=""
+    for path in path_list:
+        final_path=final_path+"/"+path
+    final_path=final_path+"/"
+    return final_path
+
+
+if len(args) > 1 and len(args) < 3:
+    path = sys.argv[1]
+    abs_path = os.path.abspath(path)
+    if abs_path[-3:] == "exe":
+        if os.path.exists(abs_path):
+            file_name = abs_path.split("/")[-1]
+            path_to_file = PathFromList(abs_path.split("/")[1:-1])
+            os.chdir(path_to_file)
+            subprocess.run(f'proton-call -c /usr/bin -r "./{file_name}"', shell=True)
+        else:
+            rp("[bright_red]Error:[/bright_red] File/Path Doesn't Exists")
+    else:
+        rp("[bright_red]Error:[/bright_red] Given File is not a Windows exe")
+
+    
+else:
+    rp("[bright_red]Error:[/bright_red] Too Many or Too Less Args")
